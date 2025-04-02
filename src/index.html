@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Health Advisor Demo</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --danger: #dc2626;
+            --success: #16a34a;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+
+        .positive {
+            background: #f0fdf4;
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .negative {
+            background: #fef2f2;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .loading {
+            display: none;
+            margin: 1rem 0;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Financial Health Check</h1>
+        
+        <div class="form-group">
+            <label>Monthly Income ($)</label>
+            <input type="number" id="income" placeholder="5000">
+        </div>
+
+        <div class="form-group">
+            <label>Monthly Expenses ($)</label>
+            <input type="number" id="expenses" placeholder="3500">
+        </div>
+
+        <div class="form-group">
+            <label>Total Debt ($)</label>
+            <input type="number" id="debt" placeholder="15000">
+        </div>
+
+        <button onclick="analyze()">Analyze Finances</button>
+        <div class="loading" id="loading">Analyzing...</div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function analyze() {
+    const income = parseFloat(document.getElementById('income').value);
+    const expenses = parseFloat(document.getElementById('expenses').value);
+    const debt = parseFloat(document.getElementById('debt').value);
+
+    // Show loading
+    const loading = document.getElementById('loading');
+    const resultDiv = document.getElementById('result');
+    loading.style.display = 'block';
+    resultDiv.innerHTML = '';
+
+    try {
+        // In your frontend's analyze() function
+    const response = await fetch('http://localhost:8000/predict', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        income: income,
+        expenses: expenses,
+        debt: debt,
+        
+    })
+});
+
+        if (!response.ok) throw new Error(await response.text());
+        
+        const data = await response.json();
+        
+        // Display results
+        resultDiv.className = `result ${data.recommendations.length > 0 ? 'negative' : 'positive'}`;
+        
+        let html = `
+            <h3>AI Analysis Results</h3>
+            <p>Risk Score: ${data.risk_score.toFixed(1)}%</p>
+            <p>Savings Rate: ${data.savings_rate.toFixed(1)}%</p>
+            <p>Financial Health Prediction: ${data.prediction.toFixed(2)}</p>
+        `;
+
+        if (data.recommendations.length > 0) {
+            html += `<h4>Recommendations:</h4><ul>`;
+            data.recommendations.forEach(r => html += `<li>${r}</li>`);
+            html += `</ul>`;
+        } else {
+            html += `<p>✅ Your finances look healthy!</p>`;
+        }
+
+        resultDiv.innerHTML = html;
+
+    } catch (error) {
+        resultDiv.className = 'result negative';
+        resultDiv.innerHTML = `Error: ${error.message}`;
+    } finally {
+        loading.style.display = 'none';
+    }
+}
+    </script>
+</body>
+</html>

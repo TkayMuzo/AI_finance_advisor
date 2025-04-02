@@ -1,0 +1,8 @@
+{
+    "scaled_features": ["Total_Income", "Total_Expenses", "Net_Savings"],
+    "required_features": ["Total_Income", "Total_Expenses", "Debt"],
+    "thresholds": {
+      "debt_to_income": 0.35,
+      "savings_rate": 0.2
+    }
+  }

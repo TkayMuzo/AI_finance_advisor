@@ -1,0 +1,20 @@
+2025-03-22 22:39:28,180 - INFO - Successfully loaded model and scaler
+2025-03-22 22:39:28,180 - INFO - Loading input from monthly_summary.csv
+2025-03-22 22:39:28,195 - ERROR - Prediction failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Debt_Payments
+- Debt_Payments_Lag_1
+- Debt_Payments_Lag_2
+- Debt_Payments_Lag_3
+- Debt_to_Income
+- ...
+
+2025-03-22 22:39:28,197 - ERROR - Processing failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Debt_Payments
+- Debt_Payments_Lag_1
+- Debt_Payments_Lag_2
+- Debt_Payments_Lag_3
+- Debt_to_Income
+- ...
+
