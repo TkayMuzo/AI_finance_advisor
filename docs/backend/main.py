@@ -6,6 +6,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import logging
+import os
 from typing import List
 
 # Configure logging
@@ -40,12 +41,20 @@ class PredictionResponse(BaseModel):
 model = None
 scaler = None
 
+
+
 @app.on_event("startup")
 async def load_artifacts():
     global model, scaler
     try:
-        model = joblib.load('regression_model.pkl')
-        scaler = joblib.load('scaler.pkl')
+        # Determine the directory of this file (main.py)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the full paths to your files
+        model_path = os.path.join(base_dir, 'regression_model.pkl')
+        scaler_path = os.path.join(base_dir, 'scaler.pkl')
+        
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
         logging.info("Successfully loaded model and scaler")
     except Exception as e:
         logging.error(f"Failed to load artifacts: {str(e)}")
